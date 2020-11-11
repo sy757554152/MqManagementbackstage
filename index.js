@@ -8,7 +8,6 @@ app.use(koaBody({
     }
 }));
 
-
 //解决跨域
 const cors =require('koa2-cors');
 app.use(cors({
