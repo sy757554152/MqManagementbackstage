@@ -12,6 +12,7 @@
   "devDependencies": {},
   "dependencies": {
     "@koa/multer": "^2.0.2",
+    "bcrypt": "^5.0.0",
     "glob": "^7.1.6",
     "koa": "^2.11.0",
     "koa-body": "^4.1.1",

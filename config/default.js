@@ -6,7 +6,7 @@ const config = {
 
     // 数据库配置
     database: {
-        DATABASE: 'phone',
+        DATABASE: 'mqDB',
         USERNAME: 'root',
         PASSWORD: '',
         PORT: '3306',

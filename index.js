@@ -11,7 +11,7 @@ app.use(koaBody({
 //解决跨域
 const cors =require('koa2-cors');
 app.use(cors({
-    origin:['http://localhost:9528'],
+    origin:['http://localhost:8000'],
     credentials:true
 }));
 
@@ -21,18 +21,18 @@ app.use(bodyParser());
 
 //加载路由
 const Router=require('koa-router');
-let user=require('./controller/user');
+let manager=require('./controller/manager');
+let login = require('./controller/login');
 let router=new Router();
-router.use('/user',user.routes());
+router.use('/user',manager.routes());
+router.use('/login',login.routes())
 app.use(router.routes());
 //限制只能接受post或get请求
 app.use(router.allowedMethods());
 
 //引入mysql文件 连接数据库
 const config = require('./config/default')
-const mysql = require('./mysql')
 app.use(async (ctx)=>{
-    // let data = await mysql.query();
     ctx.body = "实验";
 })
 app.listen(config.port,()=>{

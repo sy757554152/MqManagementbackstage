@@ -25,4 +25,4 @@ class Mysql {
     }
 }
 
-module.exports = new Mysql()
+module.exports = Mysql;
