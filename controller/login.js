@@ -9,13 +9,21 @@ router.post('/account',async(ctx)=>{
     await manager.login({userName}).then( async (res) => {
         if(res.length !== 0){
             const [result] = res;
-            const { password: pass, type } = result;
+            const { password: pass, type, managerName, managerId, telephone, email } = result;
             const isTrue = await comparePass(password, pass);
             if(isTrue) {
                 ctx.body={
                     status: 'ok',
                     type: 'account',
                     currentAuthority: type,
+                    userdata:{
+                        name: managerName,
+                        type,
+                        avatar: 'https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png',
+                        id: managerId,
+                        email,
+                        phone: telephone,
+                    }
                 }
             }else {
                 ctx.body={
