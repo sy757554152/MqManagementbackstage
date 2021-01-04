@@ -1,7 +1,7 @@
 const Router=require('koa-router');
 let router=new Router();
 const Manager = require('../model/manager');
-const { register } = require('../method/index');
+const { register, comparePass } = require('../method/index');
 router.get('/insertManager',async(ctx)=>{
     const pass = await register('123456789');
     const data = {
@@ -64,10 +64,9 @@ router.post('/homePage',async(ctx)=>{
 })
 router.post('/addManager',async(ctx)=>{
     let data=ctx.request.body;
-    let { password } = data
+    const { password } = data
     const pass = await register(password);
-    password = pass;
-
+    data.password = pass;
     const manager = new Manager();
     await manager.insertManager(data).then(res =>{
         const { protocol41 = false} = res;
@@ -112,4 +111,105 @@ router.get('/searchManager',async(ctx)=>{
         }
     })
 })
+router.get('/getAllManager',async(ctx)=>{
+    let data = ctx.query;
+    const { userid } = data;
+    const manager = new Manager();
+    await manager.getAllManager({userid}).then(res =>{
+        ctx.body = {
+            data:res,
+            status: 'ok',
+            message: '查找成功!',
+        }
+    }).catch(err => {
+        ctx.body={
+            status: 'error',
+            message: '查找失败!',
+        }
+    })
+})
+
+router.post('/DeleManager',async(ctx)=>{
+    let data=ctx.request.body;
+    const { managerId } = data;
+    const manager = new Manager();
+    await manager.deleManager({managerId}).then(res =>{
+        if(res.protocol41){
+            ctx.body={
+                status: 'ok',
+                message: '删除成功!',
+            }
+        }else{
+            ctx.body={
+                status: 'error',
+                message: '删除失败!',
+            }
+        }
+    }).catch(err => {
+        ctx.body={
+            status: 'error',
+            message: '删除失败!',
+        }
+    })
+})
+
+router.post('/checkPassword',async(ctx)=>{
+    let data=ctx.request.body;
+    const { userid, oldPassword } = data;
+    const manager = new Manager();
+    await manager.login({userName: userid}).then(async (res) => {
+        if(res.length !== 0){
+            const result = res[0];
+            const { password } = result;
+            const isTrue = await comparePass(oldPassword, password);
+            if(isTrue) {
+                ctx.body={
+                    status: 'ok',
+                    message: '验证成功!',
+                }
+            }else {
+                ctx.body={
+                    status: 'error',
+                    message: '密码错误!',
+                }
+            }
+        }else{
+            ctx.body={
+                status: 'error',
+                message: '未查找到该用户!',
+            }
+        }
+    }).catch(err => {
+        ctx.body={
+            status: 'error',
+            message: '密码验证失败!',
+        }
+    })
+})
+
+router.post('/changePassword',async(ctx) => {
+    let data=ctx.request.body;
+    const { userid, newPassword } = data;
+    const password = await register(newPassword);
+    const manager = new Manager();
+    await manager.changePassword({userid,password}).then(res => {
+        if(res.protocol41){
+            ctx.body={
+                status: 'ok',
+                message: '修改密码成功!',
+            }
+        }else{
+            ctx.body={
+                status: 'error',
+                message: '修改密码失败!',
+            }
+        }
+    }).catch(err => {
+        ctx.body={
+            status: 'error',
+            message: '密码修改失败!',
+        }
+    })
+})
+
 module.exports=router;

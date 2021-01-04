@@ -1,7 +1,7 @@
 const Router=require('koa-router');
 let router=new Router();
 const Manager = require('../model/manager');
-const { register, comparePass} = require('../method/index');
+const { comparePass} = require('../method/index');
 router.post('/account',async(ctx)=>{
     let data=ctx.request.body;
     const { password, userName } = data;
@@ -38,6 +38,12 @@ router.post('/account',async(ctx)=>{
                 type: 'account',
                 currentAuthority: 'guest',
             }
+        }
+    }).catch(err => {
+        ctx.body={
+            status: 'error',
+            type: 'account',
+            currentAuthority: 'guest',
         }
     })
 })
