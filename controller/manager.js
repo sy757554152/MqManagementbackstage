@@ -212,4 +212,4 @@ router.post('/changePassword',async(ctx) => {
     })
 })
 
-module.exports=router;
+module.exports = router;
