@@ -24,12 +24,14 @@ const Router = require('koa-router');
 const manager = require('./controller/manager');
 const login = require('./controller/login');
 const form = require('./controller/form');
-const type = require('./controller/type')
+const type = require('./controller/type');
+const staff = require('./controller/staff');
 const router = new Router();
 router.use('/user', manager.routes());
 router.use('/login', login.routes());
 router.use('/form', form.routes());
 router.use('/type', type.routes());
+router.use('/staff', staff.routes());
 app.use(router.routes());
 //限制只能接受post或get请求
 app.use(router.allowedMethods());

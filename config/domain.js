@@ -1,0 +1,1 @@
+exports.domainName = 'http://loopsy.top/';

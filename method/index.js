@@ -1,5 +1,8 @@
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
+const {domainName} = require('../config/domain');
+const fs = require('fs');
+const path = require('path');
 // (async () => {
 //     const myPlaintextPassword = '123456'; // 我的明文密码
 //     const someOtherPlaintextPassword = 'not_bacon'; // 错误的密码
@@ -21,7 +24,20 @@ async function register(pass) {
 async function comparePass (pass,passDb) {
     return bcrypt.compare(pass, passDb)
 }
+
+function delePicFile(url) {
+    const fileName = url.substr(domainName.length);
+    let filePath = path.join(__dirname, '../images') + `/${fileName}`;
+    fs.unlinkSync(filePath);
+}
+function deleVideoFile(url) {
+    const fileName = url.substr(domainName.length);
+    let filePath = path.join(__dirname, '../videos') + `/${fileName}`;
+    fs.unlinkSync(filePath);
+}
 module.exports = {
     register,
     comparePass,
+    delePicFile,
+    deleVideoFile,
 }
