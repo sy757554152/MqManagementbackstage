@@ -4,7 +4,8 @@ const Staff = require('../model/staff');
 const path=require('path')
 const fs=require('fs');
 const { domainName } = require('../config/domain');
-const { delePicFile } = require('../method/index')
+const { delePicFile } = require('../method/index');
+const images = require('images');
 
 router.post('/addStaff',async(ctx)=>{
     const data = ctx.request.body;
@@ -85,6 +86,62 @@ router.post('/deleStaff',async(ctx)=>{
         ctx.body = {
             status: 'error',
             message: '删除失败！',
+        }
+    })
+})
+
+router.post('/addStaffPic',async(ctx)=>{
+    const data = ctx.request.body;
+    const { staffPid, staffPicId } = data;
+    const fileList = ctx.request.files; // 获取上传文件
+
+    let sql = 'insert into staffpic (staffPicId, staffPid, PicUrl, PicCompressUrl) values';
+    let arrUrl = [];
+    for (var item in fileList){
+        let file = fileList[item];
+        let PicUrl = domainName + `${staffPicId}${file.name}`;
+        let PicCompressUrl = domainName + `${staffPicId}Compress${file.name}`;
+        arrUrl.push(`('${staffPicId}${item}','${staffPid}','${PicUrl}','${PicCompressUrl}')`);
+    }
+    for(let i = 0; i < arrUrl.length; i++){
+        if(i+1 === arrUrl.length){
+            sql = sql + arrUrl[i];
+        }else {
+            sql = sql + arrUrl[i] + `,`;
+        }
+    }
+    const staff = new Staff();
+    await staff.addStaffPic(sql).then(res =>{
+        const { protocol41 = false} = res;
+        if(protocol41){
+            for (var item in fileList){
+                let file = fileList[item];
+                // 创建可读流
+                let reader = fs.createReadStream(file.path);
+                let filePath = path.join(__dirname, '../images') + `/${staffPicId}${file.name}`;
+                let fileCompressPath = path.join(__dirname, '../images') + `/${staffPicId}Compress${file.name}`;
+                // 创建可写流
+                const upStream = fs.createWriteStream(filePath);
+                // 可读流通过管道写入可写流
+                reader.pipe(upStream);
+                images(file.path).save(fileCompressPath,{
+                    quality: 50,
+                })
+            }
+            ctx.body = {
+                status: 'ok',
+                message: '添加成功!',
+            }
+        }else{
+            ctx.body = {
+                status: 'error',
+                message: '添加失败！',
+            }
+        }
+    }).catch(err=>{
+        ctx.body = {
+            status: 'error',
+            message: '添加失败！',
         }
     })
 })

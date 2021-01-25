@@ -56,6 +56,16 @@ class Staff extends Sql{
             resolve(results)
           })
         })
-      }
+    }
+    addStaffPic(str){
+        return new Promise((resolve, reject) => {
+            pool.query(str, function(error, results, fields){
+                if (error) {
+                throw error
+                };
+                resolve(results)
+            })
+        })
+    }
 }
 module.exports = Staff;

@@ -37,4 +37,8 @@ screenshot
 .firebase
 .eslintcache
 
+/images
+/videos
+
+
 build
