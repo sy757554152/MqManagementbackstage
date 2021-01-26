@@ -4,6 +4,7 @@ const Video = require('../model/video');
 const path=require('path')
 const fs=require('fs');
 const { domainName } = require('../config/domain');
+const { deleVideoFile } = require('../method/index');
 
 router.post('/addVideo',async(ctx)=>{
     const data = ctx.request.body;
@@ -52,6 +53,55 @@ router.post('/addVideo',async(ctx)=>{
         ctx.body = {
             status: 'error',
             message: '添加失败！',
+        }
+    })
+})
+
+router.get('/getVideo',async(ctx) => {
+    const video = new Video();
+    await video.getVideo().then(res => {
+        if(res.length >= 0) {
+            ctx.body = {
+                status: 'ok',
+                message: '查找成功!',
+                data: res,
+            }
+        }else {
+            ctx.body = {
+                status: 'error',
+                message: '查找失败!',
+            }
+        }
+    }).catch(err => {
+        ctx.body = {
+            status: 'error',
+            message: '查找失败！',
+        }
+    })
+})
+
+router.post('/deleVideo',async(ctx)=>{
+    const data = ctx.request.body;
+    const { videoId, videoUrl } = data;
+    const video = new Video();
+    await video.deleVideo({videoId}).then(res =>{
+        const { protocol41 = false} = res;
+        if(protocol41){
+            deleVideoFile(videoUrl);
+            ctx.body = {
+                status: 'ok',
+                message: '删除成功!',
+            }
+        }else{
+            ctx.body = {
+                status: 'error',
+                message: '删除失败！',
+            }
+        }
+    }).catch(err=>{
+        ctx.body = {
+            status: 'error',
+            message: '删除失败！',
         }
     })
 })

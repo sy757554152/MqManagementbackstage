@@ -5,6 +5,7 @@ const path=require('path')
 const fs=require('fs');
 const { domainName } = require('../config/domain');
 const images = require('images');
+const { delePicFile } = require('../method/index');
 
 router.post('/addGuest',async(ctx)=>{
     const data = ctx.request.body;
@@ -58,6 +59,56 @@ router.post('/addGuest',async(ctx)=>{
         ctx.body = {
             status: 'error',
             message: '添加失败！',
+        }
+    })
+})
+
+router.get('/getGuest',async(ctx) => {
+    const guest = new Guest();
+    await guest.getGuest().then(res => {
+        if(res.length >= 0) {
+            ctx.body = {
+                status: 'ok',
+                message: '查找成功!',
+                data: res,
+            }
+        }else {
+            ctx.body = {
+                status: 'error',
+                message: '查找失败!',
+            }
+        }
+    }).catch(err => {
+        ctx.body = {
+            status: 'error',
+            message: '查找失败！',
+        }
+    })
+})
+
+router.post('/deleGuest',async(ctx)=>{
+    const data = ctx.request.body;
+    const { guestId, picUrl, picCompressUrl } = data;
+    const guest = new Guest();
+    await guest.deleSample({guestId}).then(res =>{
+        const { protocol41 = false} = res;
+        if(protocol41){
+            delePicFile(picUrl);
+            delePicFile(picCompressUrl);
+            ctx.body = {
+                status: 'ok',
+                message: '删除成功!',
+            }
+        }else{
+            ctx.body = {
+                status: 'error',
+                message: '删除失败！',
+            }
+        }
+    }).catch(err=>{
+        ctx.body = {
+            status: 'error',
+            message: '删除失败！',
         }
     })
 })

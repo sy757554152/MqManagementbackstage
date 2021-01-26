@@ -21,5 +21,28 @@ class Environment extends Sql{
             })
         })
     }
+
+    getEnvironment(){
+        return new Promise((resolve, reject) => {
+        pool.query(`select * from environment`, function(error, results, fields){
+            if (error) {
+                throw error
+                };
+                resolve(results)
+            })
+        })
+    }
+
+    //删除员工展示图片
+    deleEnvironment({graphId}){
+        return new Promise((resolve, reject) => {
+          pool.query(`delete from environment where graphId='${graphId}'`, function(error, results, fields){
+            if (error) {
+              throw error
+            };
+            resolve(results)
+          })
+        })
+    }
 }
 module.exports = Environment;

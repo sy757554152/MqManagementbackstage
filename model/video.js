@@ -21,5 +21,28 @@ class Video extends Sql{
             })
         })
     }
+
+    getVideo(){
+        return new Promise((resolve, reject) => {
+        pool.query(`select * from video,videotype,staff where video.type=videotype.typeId and video.staffId=staff.staffId`, function(error, results, fields){
+            if (error) {
+                throw error
+                };
+                resolve(results)
+            })
+        })
+    }
+
+    //删除
+    deleVideo({videoId}){
+        return new Promise((resolve, reject) => {
+          pool.query(`delete from video where videoId='${videoId}'`, function(error, results, fields){
+            if (error) {
+              throw error
+            };
+            resolve(results)
+          })
+        })
+    }
 }
 module.exports = Video;

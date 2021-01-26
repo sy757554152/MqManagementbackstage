@@ -21,5 +21,28 @@ class Guest extends Sql{
             })
         })
     }
+
+    getGuest(){
+        return new Promise((resolve, reject) => {
+        pool.query(`select * from guest,pictype,staff where guest.type=pictype.typeId and guest.staffId=staff.staffId`, function(error, results, fields){
+            if (error) {
+                throw error
+                };
+                resolve(results)
+            })
+        })
+    }
+
+    //删除员工展示图片
+    deleSample({guestId}){
+        return new Promise((resolve, reject) => {
+          pool.query(`delete from guest where guestId='${guestId}'`, function(error, results, fields){
+            if (error) {
+              throw error
+            };
+            resolve(results)
+          })
+        })
+    }
 }
 module.exports = Guest;

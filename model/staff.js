@@ -46,7 +46,7 @@ class Staff extends Sql{
             })
         })
     }
-
+    //删除员工
     deleStaff({staffId}){
         return new Promise((resolve, reject) => {
           pool.query(`delete from staff where staffId='${staffId}'`, function(error, results, fields){
@@ -57,6 +57,7 @@ class Staff extends Sql{
           })
         })
     }
+    //添加员工展示图片
     addStaffPic(str){
         return new Promise((resolve, reject) => {
             pool.query(str, function(error, results, fields){
@@ -65,6 +66,29 @@ class Staff extends Sql{
                 };
                 resolve(results)
             })
+        })
+    }
+
+    getStaffPic(){
+        return new Promise((resolve, reject) => {
+        pool.query(`select * from staffPic,staff  where staffPic.staffPid = staff.staffId`, function(error, results, fields){
+            if (error) {
+                throw error
+                };
+                resolve(results)
+            })
+        })
+    }
+
+    //删除员工展示图片
+    deleStaffPic({staffPicId}){
+        return new Promise((resolve, reject) => {
+          pool.query(`delete from staffPic where staffPicId='${staffPicId}'`, function(error, results, fields){
+            if (error) {
+              throw error
+            };
+            resolve(results)
+          })
         })
     }
 }

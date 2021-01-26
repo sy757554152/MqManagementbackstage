@@ -21,5 +21,28 @@ class MainPic extends Sql{
             })
         })
     }
+
+    getMainPic(){
+        return new Promise((resolve, reject) => {
+        pool.query(`select * from maingraph`, function(error, results, fields){
+            if (error) {
+                throw error
+                };
+                resolve(results)
+            })
+        })
+    }
+
+    //删除员工展示图片
+    deleMainPic({graphId}){
+        return new Promise((resolve, reject) => {
+          pool.query(`delete from maingraph where graphId='${graphId}'`, function(error, results, fields){
+            if (error) {
+              throw error
+            };
+            resolve(results)
+          })
+        })
+    }
 }
 module.exports = MainPic;

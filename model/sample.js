@@ -21,5 +21,28 @@ class Sample extends Sql{
             })
         })
     }
+
+    getSample(){
+        return new Promise((resolve, reject) => {
+        pool.query(`select * from sample,pictype,staff where sample.type=pictype.typeId and sample.staffId=staff.staffId`, function(error, results, fields){
+            if (error) {
+                throw error
+                };
+                resolve(results)
+            })
+        })
+    }
+
+    //删除员工展示图片
+    deleSample({sampleId}){
+        return new Promise((resolve, reject) => {
+          pool.query(`delete from sample where sampleId='${sampleId}'`, function(error, results, fields){
+            if (error) {
+              throw error
+            };
+            resolve(results)
+          })
+        })
+    }
 }
 module.exports = Sample;

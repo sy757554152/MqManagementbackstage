@@ -146,4 +146,54 @@ router.post('/addStaffPic',async(ctx)=>{
     })
 })
 
+router.get('/getStaffPic',async(ctx) => {
+    const staff = new Staff();
+    await staff.getStaffPic().then(res => {
+        if(res.length >= 0) {
+            ctx.body = {
+                status: 'ok',
+                message: '查找成功!',
+                data: res,
+            }
+        }else {
+            ctx.body = {
+                status: 'error',
+                message: '查找失败!',
+            }
+        }
+    }).catch(err => {
+        ctx.body = {
+            status: 'error',
+            message: '查找失败！',
+        }
+    })
+})
+
+router.post('/deleStaffPic',async(ctx)=>{
+    const data = ctx.request.body;
+    const { staffPicId, PicUrl, PicCompressUrl } = data;
+    const staff = new Staff();
+    await staff.deleStaffPic({staffPicId}).then(res =>{
+        const { protocol41 = false} = res;
+        if(protocol41){
+            delePicFile(PicUrl);
+            delePicFile(PicCompressUrl);
+            ctx.body = {
+                status: 'ok',
+                message: '删除成功!',
+            }
+        }else{
+            ctx.body = {
+                status: 'error',
+                message: '删除失败！',
+            }
+        }
+    }).catch(err=>{
+        ctx.body = {
+            status: 'error',
+            message: '删除失败！',
+        }
+    })
+})
+
 module.exports=router;
