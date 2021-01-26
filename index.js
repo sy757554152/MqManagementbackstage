@@ -1,12 +1,18 @@
 const Koa = require('koa');
 const app = new Koa();
 const koaBody = require('koa-body');
+const serve = require("koa-static");
+const fs = require('fs');
 app.use(koaBody({
     multipart: true,
     formidable: {
         maxFileSize: 1024*1024*1024    // 设置上传文件大小最大限制，默认2M
     }
 }));
+
+app.use(serve(__dirname + "/client/dist"));
+app.use(serve(__dirname + '/images'));
+app.use(serve(__dirname + '/videos'));
 
 //解决跨域
 const cors = require('koa2-cors');
@@ -42,15 +48,21 @@ router.use('/environment', environment.routes());
 router.use('/sample', sample.routes());
 router.use('/guest', guest.routes());
 router.use('/video', video.routes());
+
+router.get('/',(ctx, next) => {
+    ctx.type = 'html';
+    ctx.body = fs.createReadStream('/client/dist/index.html');
+});
+
 app.use(router.routes());
 //限制只能接受post或get请求
 app.use(router.allowedMethods());
 
 //引入mysql文件 连接数据库
 const config = require('./config/default')
-app.use(async (ctx)=>{
-    ctx.body = "实验";
-})
+// app.use(async (ctx)=>{
+//     ctx.body = "实验";
+// })
 app.listen(config.port,() => {
     console.log('db-project-start')
 })

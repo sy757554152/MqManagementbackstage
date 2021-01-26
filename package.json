@@ -1,5 +1,5 @@
 {
-  "name": "MqManagementbackstage",
+  "name": "uniapp",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -13,13 +13,14 @@
   "devDependencies": {},
   "dependencies": {
     "@koa/multer": "^2.0.2",
-    "bcrypt": "^5.0.0",
+    "bcryptjs": "^2.4.3",
     "glob": "^7.1.6",
     "images": "^3.2.3",
     "koa": "^2.11.0",
     "koa-body": "^4.1.1",
     "koa-bodyparser": "^4.3.0",
     "koa-router": "^8.0.8",
+    "koa-static": "^5.0.0",
     "koa2-cors": "^2.0.6",
     "mysql": "^2.18.1",
     "path": "^0.12.7"
