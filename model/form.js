@@ -33,5 +33,16 @@ class Form extends Sql{
         })
       })
     }
+
+    searchForm({type,searchType,value}){
+      return new Promise((resolve, reject) => {
+        pool.query(`select * from picType,form where formType=typeId and tag='${type}' and ${searchType}='${value}'`, function(error, results, fields){
+          if (error) {
+            throw error
+          };
+          resolve(results)
+        })
+      })
+    }
 }
 module.exports = Form;

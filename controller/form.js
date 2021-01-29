@@ -40,4 +40,21 @@ router.post('/deleForm',async (ctx) => {
     })
 });
 
+router.get('/searchForm',async (ctx) => {
+    const data = ctx.query;
+    const form = new Form();
+    await form.searchForm(data).then(res => {
+        ctx.body = {
+            status: 'ok',
+            data: res,
+            message: '查找成功！',
+        }
+    }).catch(err => {
+        ctx.body = {
+            status: 'error',
+            message: '查找失败!',
+        }
+    })
+});
+
 module.exports=router;
