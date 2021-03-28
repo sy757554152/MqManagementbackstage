@@ -17,7 +17,13 @@ app.use(serve(__dirname + '/videos'));
 //解决跨域
 const cors = require('koa2-cors');
 app.use(cors({
-    origin:['http://localhost:8000'],
+    origin:function(ctx) {
+        const domainName = ['http://localhost:8000','http://localhost:8080']
+        if(domainName.indexOf(ctx.header.origin) != -1) {
+            return '*';
+        }
+        return false;
+    },
     credentials:true
 }));
 

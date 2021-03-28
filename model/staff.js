@@ -69,9 +69,9 @@ class Staff extends Sql{
         })
     }
 
-    getStaffPic(){
+    getStaffPic({ staffId }){
         return new Promise((resolve, reject) => {
-        pool.query(`select * from staffPic,staff  where staffPic.staffPid = staff.staffId`, function(error, results, fields){
+        pool.query(`select * from staffPic,staff  where staffPic.staffPid = staff.staffId and staff.staffId = '${staffId}'`, function(error, results, fields){
             if (error) {
                 throw error
                 };
@@ -89,6 +89,28 @@ class Staff extends Sql{
             };
             resolve(results)
           })
+        })
+    }
+
+    changeStaff({staffId, staffName, sex, information, staffPicUrl}){
+        return new Promise((resolve, reject) => {
+        pool.query(`update staff set staffName='${staffName}', sex='${sex}', information='${information}', staffPicUrl='${staffPicUrl}' where staffId='${staffId}'`, function(error, results, fields){
+            if (error) {
+                throw error
+            };
+            resolve(results)
+        })
+        })
+    }
+
+    changeStaffPic({staffPicId, PicUrl, PicCompressUrl}){
+        return new Promise((resolve, reject) => {
+        pool.query(`update staffPic set PicUrl='${PicUrl}', PicCompressUrl='${PicCompressUrl}' where staffPicId='${staffPicId}'`, function(error, results, fields){
+            if (error) {
+                throw error
+            };
+            resolve(results)
+        })
         })
     }
 }

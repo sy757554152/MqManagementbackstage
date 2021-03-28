@@ -147,8 +147,10 @@ router.post('/addStaffPic',async(ctx)=>{
 })
 
 router.get('/getStaffPic',async(ctx) => {
+    const data = ctx.query;
+    const { staffId } = data;
     const staff = new Staff();
-    await staff.getStaffPic().then(res => {
+    await staff.getStaffPic({staffId}).then(res => {
         if(res.length >= 0) {
             ctx.body = {
                 status: 'ok',
@@ -194,6 +196,139 @@ router.post('/deleStaffPic',async(ctx)=>{
             message: '删除失败！',
         }
     })
+})
+
+router.post('/changeStaff',async(ctx)=>{
+    const data = ctx.request.body;
+    const { staffId, staffName, sex, information, isPicChange } = data;
+    let { staffPicUrl } = data;
+    const staff = new Staff();
+    if(isPicChange === 'true'){
+        const file = ctx.request.files.file; // 获取上传文件
+        // 创建可读流
+        const reader = fs.createReadStream(file.path);
+        let filePath = path.join(__dirname, '../images') + `/${staffId}${file.name}`;
+        const otherStaffPicUrl = domainName + `${staffId}${file.name}`;
+        await staff.changeStaff({staffId, staffName, sex, information, staffPicUrl:otherStaffPicUrl}).then(res =>{
+            const { protocol41 = false} = res;
+            if(protocol41){
+                // 创建可写流
+                const upStream = fs.createWriteStream(filePath);
+                // 可读流通过管道写入可写流
+                reader.pipe(upStream);
+                delePicFile(staffPicUrl);
+                ctx.body = {
+                    status: 'ok',
+                    message: '修改成功!',
+                }
+            }else{
+                ctx.body = {
+                    status: 'error',
+                    message: '修改失败！',
+                }
+            }
+        }).catch(err=>{
+            ctx.body = {
+                status: 'error',
+                message: '修改失败！',
+            }
+        })
+    }
+    else{
+        await staff.changeStaff({staffId, staffName, sex, information, staffPicUrl}).then(res =>{
+            const { protocol41 = false} = res;
+            if(protocol41){
+                ctx.body = {
+                    status: 'ok',
+                    message: '修改成功!',
+                }
+            }else{
+                ctx.body = {
+                    status: 'error',
+                    message: '修改失败！',
+                }
+            }
+        }).catch(err=>{
+            ctx.body = {
+                status: 'error',
+                message: '修改失败！',
+            }
+        })
+    }
+})
+
+router.post('/changeStaffPic',async(ctx)=>{
+    const data = ctx.request.body;
+    const { staffPicId, PicUrl, PicCompressUrl, isPicChange } = data;
+    const staff = new Staff();
+    if(isPicChange === 'true'){
+        const file = ctx.request.files.file; // 获取上传文件
+        // 创建可读流
+        const reader = fs.createReadStream(file.path);
+        let filePath = path.join(__dirname, '../images') + `/${staffPicId}${file.name}`;
+        let fileCompressPath = path.join(__dirname, '../images') + `/${staffPicId}Compress${file.name}`;
+        let otherPicUrl = domainName + `${staffPicId}${file.name}`;
+        let otherPicCompressUrl = domainName + `${staffPicId}Compress${file.name}`;
+        await staff.changeStaffPic({staffPicId, PicUrl: otherPicUrl, PicCompressUrl: otherPicCompressUrl}).then(res =>{
+            const { protocol41 = false} = res;
+            if(protocol41){
+                if(otherPicUrl === PicUrl){
+                    // 创建可写流
+                    const upStream = fs.createWriteStream(filePath);
+                    // 可读流通过管道写入可写流
+                    reader.pipe(upStream);
+                    images(file.path).save(fileCompressPath,{
+                        quality: 50,
+                    })
+                }else{
+                    // 创建可写流
+                    const upStream = fs.createWriteStream(filePath);
+                    // 可读流通过管道写入可写流
+                    reader.pipe(upStream);
+                    images(file.path).save(fileCompressPath,{
+                        quality: 50,
+                    })
+                    delePicFile(PicUrl);
+                    delePicFile(PicCompressUrl);
+                }
+                ctx.body = {
+                    status: 'ok',
+                    message: '修改成功!',
+                }
+            }else{
+                ctx.body = {
+                    status: 'error',
+                    message: '修改失败！',
+                }
+            }
+        }).catch(() => {
+            ctx.body = {
+                status: 'error',
+                message: '修改失败！',
+            }
+        })
+    }
+    else{
+        await staff.changeStaffPic({staffPicId, PicUrl, PicCompressUrl}).then(res =>{
+            const { protocol41 = false} = res;
+            if(protocol41){
+                ctx.body = {
+                    status: 'ok',
+                    message: '修改成功!',
+                }
+            }else{
+                ctx.body = {
+                    status: 'error',
+                    message: '修改失败！',
+                }
+            }
+        }).catch(err=>{
+            ctx.body = {
+                status: 'error',
+                message: '修改失败！',
+            }
+        })
+    }
 })
 
 module.exports=router;

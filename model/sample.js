@@ -22,9 +22,9 @@ class Sample extends Sql{
         })
     }
 
-    getSample(){
+    getSample({staffId}){
         return new Promise((resolve, reject) => {
-        pool.query(`select * from sample,pictype,staff where sample.type=pictype.typeId and sample.staffId=staff.staffId`, function(error, results, fields){
+        pool.query(`select * from sample,pictype,staff where sample.type=pictype.typeId and sample.staffId=staff.staffId and staff.staffId='${staffId}'`, function(error, results, fields){
             if (error) {
                 throw error
                 };
@@ -42,6 +42,28 @@ class Sample extends Sql{
             };
             resolve(results)
           })
+        })
+    }
+
+    changeSample({sampleId, picUrl, picCompressUrl}){
+        return new Promise((resolve, reject) => {
+        pool.query(`update sample set picUrl='${picUrl}', picCompressUrl='${picCompressUrl}' where sampleId='${sampleId}'`, function(error, results, fields){
+            if (error) {
+                throw error
+            };
+            resolve(results)
+        })
+        })
+    }
+
+    searchSample({picType,staffId}){
+        return new Promise((resolve, reject) => {
+        pool.query(`select * from sample,pictype,staff where sample.type=pictype.typeId and sample.staffId=staff.staffId and staff.staffId='${staffId}' and pictype.typeId='${picType}'`, function(error, results, fields){
+            if (error) {
+                throw error
+                };
+                resolve(results)
+            })
         })
     }
 }
