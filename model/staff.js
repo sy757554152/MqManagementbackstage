@@ -24,9 +24,9 @@ class Staff extends Sql{
     // }
 
     //添加员工
-    addStaff({staffId, staffName, sex, information, staffPicUrl}){
+    addStaff({staffId, staffName, sex, information, staffPicUrl, staffTid}){
         return new Promise((resolve, reject) => {
-        pool.query(`insert into staff (staffId, staffName, sex, information, staffPicUrl) values('${staffId}','${staffName}','${sex}','${information}','${staffPicUrl}')`, function(error, results, fields){
+        pool.query(`insert into staff (staffId, staffName, sex, information, staffPicUrl, staffTid) values('${staffId}','${staffName}','${sex}','${information}','${staffPicUrl}','${staffTid}')`, function(error, results, fields){
             if (error) {
             throw error
             };
@@ -38,7 +38,7 @@ class Staff extends Sql{
     //获取员工数据
     getStaff(){
         return new Promise((resolve, reject) => {
-        pool.query(`select * from staff`, function(error, results, fields){
+        pool.query(`select * from staff,staffType where staffTid=staffTypeId`, function(error, results, fields){
             if (error) {
                 throw error
                 };
@@ -92,9 +92,9 @@ class Staff extends Sql{
         })
     }
 
-    changeStaff({staffId, staffName, sex, information, staffPicUrl}){
+    changeStaff({staffId, staffName, sex, information, staffPicUrl, staffTid}){
         return new Promise((resolve, reject) => {
-        pool.query(`update staff set staffName='${staffName}', sex='${sex}', information='${information}', staffPicUrl='${staffPicUrl}' where staffId='${staffId}'`, function(error, results, fields){
+        pool.query(`update staff set staffName='${staffName}', sex='${sex}', information='${information}', staffPicUrl='${staffPicUrl}', staffTid='${staffTid}' where staffId='${staffId}'`, function(error, results, fields){
             if (error) {
                 throw error
             };

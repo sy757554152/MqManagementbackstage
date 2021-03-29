@@ -1,6 +1,7 @@
 const Router=require('koa-router');
 let router=new Router();
 const Staff = require('../model/staff');
+const StaffType = require('../model/staffType')
 const path=require('path')
 const fs=require('fs');
 const { domainName } = require('../config/domain');
@@ -9,14 +10,14 @@ const images = require('images');
 
 router.post('/addStaff',async(ctx)=>{
     const data = ctx.request.body;
-    const { staffId, staffName, sex, information } = data;
+    const { staffId, staffName, sex, information, staffTid } = data;
     const file = ctx.request.files.file; // 获取上传文件
     // 创建可读流
     const reader = fs.createReadStream(file.path);
     let filePath = path.join(__dirname, '../images') + `/${staffId}${file.name}`;
     const staffPicUrl = domainName + `${staffId}${file.name}`;
     const staff = new Staff();
-    await staff.addStaff({staffId, staffName, sex, information, staffPicUrl}).then(res =>{
+    await staff.addStaff({staffId, staffName, sex, information, staffPicUrl, staffTid}).then(res =>{
         const { protocol41 = false} = res;
         if(protocol41){
             // 创建可写流
@@ -200,7 +201,7 @@ router.post('/deleStaffPic',async(ctx)=>{
 
 router.post('/changeStaff',async(ctx)=>{
     const data = ctx.request.body;
-    const { staffId, staffName, sex, information, isPicChange } = data;
+    const { staffId, staffName, sex, information, isPicChange, staffTid } = data;
     let { staffPicUrl } = data;
     const staff = new Staff();
     if(isPicChange === 'true'){
@@ -209,7 +210,7 @@ router.post('/changeStaff',async(ctx)=>{
         const reader = fs.createReadStream(file.path);
         let filePath = path.join(__dirname, '../images') + `/${staffId}${file.name}`;
         const otherStaffPicUrl = domainName + `${staffId}${file.name}`;
-        await staff.changeStaff({staffId, staffName, sex, information, staffPicUrl:otherStaffPicUrl}).then(res =>{
+        await staff.changeStaff({staffId, staffName, sex, information, staffPicUrl:otherStaffPicUrl, staffTid}).then(res =>{
             const { protocol41 = false} = res;
             if(protocol41){
                 // 创建可写流
@@ -235,7 +236,7 @@ router.post('/changeStaff',async(ctx)=>{
         })
     }
     else{
-        await staff.changeStaff({staffId, staffName, sex, information, staffPicUrl}).then(res =>{
+        await staff.changeStaff({staffId, staffName, sex, information, staffPicUrl, staffTid}).then(res =>{
             const { protocol41 = false} = res;
             if(protocol41){
                 ctx.body = {
@@ -329,6 +330,79 @@ router.post('/changeStaffPic',async(ctx)=>{
             }
         })
     }
+})
+
+router.post('/addStaffType',async(ctx)=>{
+    const data = ctx.request.body;
+    const { staffTypeId, staffTypeName } = data;
+    const staffType = new StaffType();
+    await staffType.addStaffType({staffTypeId,staffTypeName}).then(res =>{
+        const { protocol41 = false} = res;
+        if(protocol41){
+            ctx.body = {
+                status: 'ok',
+                message: '添加成功!',
+            }
+        }else{
+            ctx.body = {
+                status: 'error',
+                message: '添加失败！',
+            }
+        }
+    }).catch(err=>{
+        ctx.body = {
+            status: 'error',
+            message: '添加失败！',
+        }
+    })
+})
+
+router.get('/getStaffType',async(ctx) => {
+    const staffType = new StaffType();
+    await staffType.getStaffType().then(res => {
+        if(res.length >= 0) {
+            ctx.body = {
+                status: 'ok',
+                message: '查找成功!',
+                data: res,
+            }
+        }else {
+            ctx.body = {
+                status: 'error',
+                message: '查找失败!',
+            }
+        }
+    }).catch(err => {
+        ctx.body = {
+            status: 'error',
+            message: '查找失败！',
+        }
+    })
+})
+
+router.post('/deleStaffType',async(ctx)=>{
+    const data = ctx.request.body;
+    const { staffTypeId } = data;
+    const staffType = new StaffType();
+    await staffType.deleStaffType({staffTypeId}).then(res =>{
+        const { protocol41 = false} = res;
+        if(protocol41){
+            ctx.body = {
+                status: 'ok',
+                message: '删除成功!',
+            }
+        }else{
+            ctx.body = {
+                status: 'error',
+                message: '删除失败！',
+            }
+        }
+    }).catch(err=>{
+        ctx.body = {
+            status: 'error',
+            message: '删除失败！',
+        }
+    })
 })
 
 module.exports=router;
